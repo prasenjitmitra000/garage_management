@@ -3,8 +3,9 @@ view: customer_visit_drvd {
     sql: SELECT Visit_Date,
       Client_Name,
       Client_Area,
-      ARRAY_TO_STRING(Client_Participants,"") as Client_Participants,
-      Visit_Venue,
+      Client_Region,
+      cp.Name as Client_Participants_Name,
+      cp.Designation as Client_Participants_Designation,
       ARRAY_TO_STRING(ISU_Rep,"") as ISU_Rep,
       ARRAY_TO_STRING(Garage_Rep,"") as Garage_Rep,
       Participation_Mode,
@@ -12,30 +13,17 @@ view: customer_visit_drvd {
       Purpose_of_Visit,
       Support_Provided,
       Accelerators_or_Solutions_Demonstrated,
-      Follow_Up_or_Next_Step,
-      ARRAY_TO_STRING(Remark,"") as Remark,
-      Client_Participants_Final.Name as Client_Participants_Final_Name,
-      Client_Participants_Final.Designation as Client_Participants_Final_Designation,
       Tangible_follow_ups,
-      Region FROM `garage-automation-373912.garage_management.customer_visit`
+      Follow_Up_or_Next_Step,
+      ARRAY_TO_STRING(Remarks,"") as Remarks FROM `garage-automation-373912.garage_management.customer_visits` T
+      left join  unnest(T.Client_Participants) as cp
        ;;
-  }
-
-  measure: count {
-    type: count
-    drill_fields: [ visit_date,
-      client_name,
-      client_participants,
-      isu_rep,
-      garage_rep,
-      purpose_of_visit,
-      follow_up_or_next_step,
-      remark]
   }
 
 
 
   dimension_group: visit {
+
     type: time
     description: "Date the customer visited"
     timeframes: [
@@ -61,14 +49,25 @@ view: customer_visit_drvd {
     sql: ${TABLE}.Client_Area ;;
   }
 
-  dimension: client_participants {
+  dimension: client_region {
     type: string
-    sql: ${TABLE}.Client_Participants ;;
+    sql: ${TABLE}.Client_Region ;;
   }
 
-  dimension: visit_venue {
+  dimension: client_region_map {
     type: string
-    sql: ${TABLE}.Visit_Venue ;;
+    map_layer_name: countries
+    sql: ${TABLE}.Client_Region ;;
+  }
+
+  dimension: client_participants_name {
+    type: string
+    sql: ${TABLE}.Client_Participants_Name ;;
+  }
+
+  dimension: client_participants_designation {
+    type: string
+    sql: ${TABLE}.Client_Participants_Designation ;;
   }
 
   dimension: isu_rep {
@@ -106,34 +105,61 @@ view: customer_visit_drvd {
     sql: ${TABLE}.Accelerators_or_Solutions_Demonstrated ;;
   }
 
-  dimension: follow_up_or_next_step {
-    type: string
-    sql: ${TABLE}.Follow_Up_or_Next_Step ;;
-  }
-
-  dimension: remark {
-    type: string
-    sql: ${TABLE}.Remark ;;
-  }
-
-  dimension: client_participants_final_name {
-    type: string
-    sql: ${TABLE}.Client_Participants_Final_Name ;;
-  }
-
-  dimension: client_participants_final_designation {
-    type: string
-    sql: ${TABLE}.Client_Participants_Final_Designation ;;
-  }
-
   dimension: tangible_follow_ups {
     type: yesno
     sql: ${TABLE}.Tangible_follow_ups ;;
   }
 
-  dimension: region {
+  dimension: follow_up_or_next_step {
     type: string
-    sql: ${TABLE}.Region ;;
+    sql: ${TABLE}.Follow_Up_or_Next_Step ;;
+  }
+
+  dimension: remarks {
+    type: string
+    sql: ${TABLE}.Remarks ;;
+  }
+
+  measure: count {
+    type: count
+    drill_fields: [visit_date,
+      client_name,
+      client_participants_name,
+      client_participants_designation,
+      isu_rep,
+      garage_rep,
+      purpose_of_visit,
+      follow_up_or_next_step,
+      remarks]
+  }
+
+  measure: tangible_count {
+    type: sum
+    sql: case when ${tangible_follow_ups} = true then 1 else 0 end ;;
+    drill_fields: [visit_date,
+      client_name,
+      client_participants_name,
+      client_participants_designation,
+      isu_rep,
+      garage_rep,
+      purpose_of_visit,
+      follow_up_or_next_step,
+      remarks]
+  }
+
+  measure: tangible_percentage {
+    type: number
+    sql: ${tangible_count}/${count} ;;
+    value_format_name: percent_2
+    drill_fields: [visit_date,
+      client_name,
+      client_participants_name,
+      client_participants_designation,
+      isu_rep,
+      garage_rep,
+      purpose_of_visit,
+      follow_up_or_next_step,
+      remarks]
   }
 
   set: detail {
@@ -141,8 +167,9 @@ view: customer_visit_drvd {
       visit_date,
       client_name,
       client_area,
-      client_participants,
-      visit_venue,
+      client_region,
+      client_participants_name,
+      client_participants_designation,
       isu_rep,
       garage_rep,
       participation_mode,
@@ -150,12 +177,9 @@ view: customer_visit_drvd {
       purpose_of_visit,
       support_provided,
       accelerators_or_solutions_demonstrated,
-      follow_up_or_next_step,
-      remark,
-      client_participants_final_name,
-      client_participants_final_designation,
       tangible_follow_ups,
-      region
+      follow_up_or_next_step,
+      remarks
     ]
   }
 }
