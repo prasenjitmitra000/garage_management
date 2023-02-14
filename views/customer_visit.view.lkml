@@ -1,4 +1,5 @@
 # The name of this view in Looker is "Customer Visit"
+
 view: customer_visit {
   # The sql_table_name parameter indicates the underlying database table
   # to be used for all fields in this view.
@@ -32,9 +33,8 @@ view: customer_visit {
   }
 
   dimension: client_participants {
-    type: string
-    #hidden: yes
-    sql: ${TABLE}.Client_Participants ;;
+    hidden: yes
+    sql: ARRAY_TO_STRING(${TABLE}.Client_Participants,"") as Client_Participants ;;
   }
 
   dimension: follow_up_or_next_step {
@@ -56,7 +56,7 @@ view: customer_visit {
 
   dimension: isu_rep {
     hidden: yes
-    sql: ${TABLE}.ISU_Rep ;;
+    sql: ARRAY_TO_STRING(${TABLE}.ISU_Rep,"") as ISU_Rep ;;
   }
 
   dimension: participation_mode {
@@ -109,7 +109,86 @@ view: customer_visit {
 
   measure: count {
     type: count
-    #drill_fields: [client_name,visit_date,client_participants,visit_venue,isu_rep]
-    drill_fields: [client_name,visit_date]
+    drill_fields: [client_name,visit_date,client_participants,visit_venue,isu_rep]
+  }
+}
+
+# The name of this view in Looker is "Customer Visit Remark"
+view: customer_visit__remark {
+  # No primary key is defined for this view. In order to join this view in an Explore,
+  # define primary_key: yes on a dimension that has no repeated values.
+
+  # Here's what a typical dimension looks like in LookML.
+  # A dimension is a groupable field that can be used to filter query results.
+  # This dimension will be called "Customer Visit Remark" in Explore.
+
+  dimension: customer_visit__remark {
+    type: string
+    description: "Remarks"
+    sql: customer_visit__remark ;;
+  }
+}
+
+# The name of this view in Looker is "Customer Visit Isu Rep"
+view: customer_visit__isu_rep {
+  # No primary key is defined for this view. In order to join this view in an Explore,
+  # define primary_key: yes on a dimension that has no repeated values.
+
+  # Here's what a typical dimension looks like in LookML.
+  # A dimension is a groupable field that can be used to filter query results.
+  # This dimension will be called "Customer Visit Isu Rep" in Explore.
+
+  dimension: customer_visit__isu_rep {
+    type: string
+    description: "ISU Rep name"
+    sql: customer_visit__isu_rep ;;
+  }
+}
+
+# The name of this view in Looker is "Customer Visit Garage Rep"
+view: customer_visit__garage_rep {
+  # No primary key is defined for this view. In order to join this view in an Explore,
+  # define primary_key: yes on a dimension that has no repeated values.
+
+  # Here's what a typical dimension looks like in LookML.
+  # A dimension is a groupable field that can be used to filter query results.
+  # This dimension will be called "Customer Visit Garage Rep" in Explore.
+
+  dimension: customer_visit__garage_rep {
+    type: string
+    description: "People who represented Garage"
+    sql: customer_visit__garage_rep ;;
+  }
+}
+
+# The name of this view in Looker is "Customer Visit Client Participants"
+view: customer_visit__client_participants {
+  # No primary key is defined for this view. In order to join this view in an Explore,
+  # define primary_key: yes on a dimension that has no repeated values.
+
+  # Here's what a typical dimension looks like in LookML.
+  # A dimension is a groupable field that can be used to filter query results.
+  # This dimension will be called "Customer Visit Client Participants" in Explore.
+
+  dimension: customer_visit__client_participants {
+    type: string
+    description: "Persons who visited from Client Side."
+    sql: customer_visit__client_participants ;;
+  }
+}
+
+# The name of this view in Looker is "Customer Visit Accelerators or Solutions Demonstrated"
+view: customer_visit__accelerators_or_solutions_demonstrated {
+  # No primary key is defined for this view. In order to join this view in an Explore,
+  # define primary_key: yes on a dimension that has no repeated values.
+
+  # Here's what a typical dimension looks like in LookML.
+  # A dimension is a groupable field that can be used to filter query results.
+  # This dimension will be called "Customer Visit Accelerators or Solutions Demonstrated" in Explore.
+
+  dimension: customer_visit__accelerators_or_solutions_demonstrated {
+    type: string
+    description: "List of Solutions or accelerators demonstrated"
+    sql: customer_visit__accelerators_or_solutions_demonstrated ;;
   }
 }
