@@ -7,7 +7,7 @@ view: customer_visit_drvd {
       cp.Name as Client_Participants_Name,
       cp.Designation as Client_Participants_Designation,
       ARRAY_TO_STRING(ISU_Rep,"") as ISU_Rep,
-      ARRAY_TO_STRING(Garage_Rep,"") as Garage_Rep,
+      ARRAY_TO_STRING(Garage_Rep,",") as Garage_Rep,
       Participation_Mode,
       Garage_Contribution,
       Purpose_of_Visit,
