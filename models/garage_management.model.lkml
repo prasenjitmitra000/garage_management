@@ -32,3 +32,5 @@ explore: proposals {}
 explore: projects {}
 
 explore: customer_visit_drvd {}
+
+explore: accelerator_or_solutions {}
