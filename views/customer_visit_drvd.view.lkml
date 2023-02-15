@@ -12,7 +12,7 @@ view: customer_visit_drvd {
       Garage_Contribution,
       Purpose_of_Visit,
       Support_Provided,
-      Accelerators_or_Solutions_Demonstrated,
+      ARRAY_TO_STRING(Accelerators_or_Solutions_Demonstrated,",") as Accelerators_or_Solutions_Demonstrated,
       Tangible_follow_ups,
       Follow_Up_or_Next_Step,
       ARRAY_TO_STRING(Remarks,"") as Remarks FROM `garage-automation-373912.garage_management.customer_visits` T
