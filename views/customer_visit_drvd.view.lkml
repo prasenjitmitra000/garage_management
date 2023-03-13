@@ -15,7 +15,8 @@ view: customer_visit_drvd {
       ARRAY_TO_STRING(Accelerators_or_Solutions_Demonstrated,",") as Accelerators_or_Solutions_Demonstrated,
       Tangible_follow_ups,
       Follow_Up_or_Next_Step,
-      ARRAY_TO_STRING(Remarks,"") as Remarks FROM `garage-automation-373912.garage_management.customer_visits` T
+      ARRAY_TO_STRING(Remarks,"") as Remarks,
+      Customer_or_Internal FROM `garage-automation-373912.garage_management.customer_visits` T
       left join  unnest(T.Client_Participants) as cp
        ;;
   }
@@ -120,6 +121,11 @@ view: customer_visit_drvd {
     sql: ${TABLE}.Remarks ;;
   }
 
+  dimension: customer_or_internal {
+    type: string
+    sql: ${TABLE}.Customer_or_Internal ;;
+  }
+
   measure: count {
     type: count
     drill_fields: [visit_date,
@@ -179,7 +185,8 @@ view: customer_visit_drvd {
       accelerators_or_solutions_demonstrated,
       tangible_follow_ups,
       follow_up_or_next_step,
-      remarks
+      remarks,
+      customer_or_internal
     ]
   }
 }
